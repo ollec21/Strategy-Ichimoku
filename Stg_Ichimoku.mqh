@@ -6,116 +6,118 @@
 
 /**
  * @file
- * Implements Ichimoku strategy.
+ * Implements Ichimoku strategy based on the Ichimoku Kinko Hyo indicator.
  */
 
 // Includes.
-#include "../../EA31337-classes/Indicators/Indi_Ichimoku.mqh"
-#include "../../EA31337-classes/Strategy.mqh"
+#include <EA31337-classes/Indicators/Indi_Ichimoku.mqh>
+#include <EA31337-classes/Strategy.mqh>
 
 // User input params.
-string __Ichimoku_Parameters__ = "-- Settings for the Ichimoku Kinko Hyo indicator --";  // >>> ICHIMOKU <<<
-uint Ichimoku_Active_Tf = 0;  // Activate timeframes (1-255, e.g. M1=1,M5=2,M15=4,M30=8,H1=16,H2=32...)
-ENUM_TRAIL_TYPE Ichimoku_TrailingStopMethod = 22;                   // Trail stop method
-ENUM_TRAIL_TYPE Ichimoku_TrailingProfitMethod = 1;                  // Trail profit method
-int Ichimoku_Period_Tenkan_Sen = 9;                                 // Period Tenkan Sen
-int Ichimoku_Period_Kijun_Sen = 26;                                 // Period Kijun Sen
-int Ichimoku_Period_Senkou_Span_B = 52;                             // Period Senkou Span B
-double Ichimoku_SignalLevel = 0.00000000;                           // Signal level
-int Ichimoku1_SignalMethod = 0;                                     // Signal method for M1 (0-
-int Ichimoku5_SignalMethod = 0;                                     // Signal method for M5 (0-
-int Ichimoku15_SignalMethod = 0;                                    // Signal method for M15 (0-
-int Ichimoku30_SignalMethod = 0;                                    // Signal method for M30 (0-
-int Ichimoku1_OpenCondition1 = 0;                                   // Open condition 1 for M1 (0-1023)
-int Ichimoku1_OpenCondition2 = 0;                                   // Open condition 2 for M1 (0-)
-ENUM_MARKET_EVENT Ichimoku1_CloseCondition = C_ICHIMOKU_BUY_SELL;   // Close condition for M1
-int Ichimoku5_OpenCondition1 = 0;                                   // Open condition 1 for M5 (0-1023)
-int Ichimoku5_OpenCondition2 = 0;                                   // Open condition 2 for M5 (0-)
-ENUM_MARKET_EVENT Ichimoku5_CloseCondition = C_ICHIMOKU_BUY_SELL;   // Close condition for M5
-int Ichimoku15_OpenCondition1 = 0;                                  // Open condition 1 for M15 (0-)
-int Ichimoku15_OpenCondition2 = 0;                                  // Open condition 2 for M15 (0-)
-ENUM_MARKET_EVENT Ichimoku15_CloseCondition = C_ICHIMOKU_BUY_SELL;  // Close condition for M15
-int Ichimoku30_OpenCondition1 = 0;                                  // Open condition 1 for M30 (0-)
-int Ichimoku30_OpenCondition2 = 0;                                  // Open condition 2 for M30 (0-)
-ENUM_MARKET_EVENT Ichimoku30_CloseCondition = C_ICHIMOKU_BUY_SELL;  // Close condition for M30
-double Ichimoku1_MaxSpread = 6.0;                                   // Max spread to trade for M1 (pips)
-double Ichimoku5_MaxSpread = 7.0;                                   // Max spread to trade for M5 (pips)
-double Ichimoku15_MaxSpread = 8.0;                                  // Max spread to trade for M15 (pips)
-double Ichimoku30_MaxSpread = 10.0;                                 // Max spread to trade for M30 (pips)
+INPUT string __Ichimoku_Parameters__ = "-- Ichimoku strategy params --";  // >>> ICHIMOKU <<<
+INPUT int Ichimoku_Active_Tf = 0;  // Activate timeframes (1-255, e.g. M1=1,M5=2,M15=4,M30=8,H1=16,H2=32...)
+INPUT ENUM_TRAIL_TYPE Ichimoku_TrailingStopMethod = 22;                  // Trail stop method
+INPUT ENUM_TRAIL_TYPE Ichimoku_TrailingProfitMethod = 1;                 // Trail profit method
+INPUT int Ichimoku_Period_Tenkan_Sen = 9;                                // Period Tenkan Sen
+INPUT int Ichimoku_Period_Kijun_Sen = 26;                                // Period Kijun Sen
+INPUT int Ichimoku_Period_Senkou_Span_B = 52;                            // Period Senkou Span B
+INPUT double Ichimoku_SignalOpenLevel = 0.00000000;                      // Signal open level
+INPUT int Ichimoku1_SignalBaseMethod = 0;                                // Signal base method (0-
+INPUT int Ichimoku1_OpenCondition1 = 0;                                  // Open condition 1 (0-1023)
+INPUT int Ichimoku1_OpenCondition2 = 0;                                  // Open condition 2 (0-)
+INPUT ENUM_MARKET_EVENT Ichimoku1_CloseCondition = C_ICHIMOKU_BUY_SELL;  // Close condition for M1
+INPUT double Ichimoku_MaxSpread = 6.0;                                   // Max spread to trade (pips)
+
+// Struct to define strategy parameters to override.
+struct Stg_Ichimoku_Params : Stg_Params {
+  unsigned int Ichimoku_Period;
+  ENUM_APPLIED_PRICE Ichimoku_Applied_Price;
+  int Ichimoku_Shift;
+  ENUM_TRAIL_TYPE Ichimoku_TrailingStopMethod;
+  ENUM_TRAIL_TYPE Ichimoku_TrailingProfitMethod;
+  double Ichimoku_SignalOpenLevel;
+  long Ichimoku_SignalBaseMethod;
+  long Ichimoku_SignalOpenMethod1;
+  long Ichimoku_SignalOpenMethod2;
+  double Ichimoku_SignalCloseLevel;
+  ENUM_MARKET_EVENT Ichimoku_SignalCloseMethod1;
+  ENUM_MARKET_EVENT Ichimoku_SignalCloseMethod2;
+  double Ichimoku_MaxSpread;
+
+  // Constructor: Set default param values.
+  Stg_Ichimoku_Params()
+      : Ichimoku_Period(::Ichimoku_Period),
+        Ichimoku_Applied_Price(::Ichimoku_Applied_Price),
+        Ichimoku_Shift(::Ichimoku_Shift),
+        Ichimoku_TrailingStopMethod(::Ichimoku_TrailingStopMethod),
+        Ichimoku_TrailingProfitMethod(::Ichimoku_TrailingProfitMethod),
+        Ichimoku_SignalOpenLevel(::Ichimoku_SignalOpenLevel),
+        Ichimoku_SignalBaseMethod(::Ichimoku_SignalBaseMethod),
+        Ichimoku_SignalOpenMethod1(::Ichimoku_SignalOpenMethod1),
+        Ichimoku_SignalOpenMethod2(::Ichimoku_SignalOpenMethod2),
+        Ichimoku_SignalCloseLevel(::Ichimoku_SignalCloseLevel),
+        Ichimoku_SignalCloseMethod1(::Ichimoku_SignalCloseMethod1),
+        Ichimoku_SignalCloseMethod2(::Ichimoku_SignalCloseMethod2),
+        Ichimoku_MaxSpread(::Ichimoku_MaxSpread) {}
+};
+
+// Loads pair specific param values.
+#include "sets/EURUSD_H1.h"
+#include "sets/EURUSD_H4.h"
+#include "sets/EURUSD_M1.h"
+#include "sets/EURUSD_M15.h"
+#include "sets/EURUSD_M30.h"
+#include "sets/EURUSD_M5.h"
 
 class Stg_Ichimoku : public Strategy {
  public:
   Stg_Ichimoku(StgParams &_params, string _name) : Strategy(_params, _name) {}
 
-  static Stg_Ichimoku *Init_M1() {
-    ChartParams cparams1(PERIOD_M1);
-    IndicatorParams ichimoku_iparams(10, INDI_ICHIMOKU);
-    Ichimoku_Params ichimoku1_iparams(Ichimoku_Period_Tenkan_Sen, Ichimoku_Period_Kijun_Sen,
-                                      Ichimoku_Period_Senkou_Span_B);
-    StgParams ichimoku1_sparams(new Trade(PERIOD_M1, _Symbol),
-                                new Indi_Ichimoku(ichimoku1_iparams, ichimoku_iparams, cparams1), NULL, NULL);
-    ichimoku1_sparams.SetSignals(Ichimoku1_SignalMethod, Ichimoku1_OpenCondition1, Ichimoku1_OpenCondition2,
-                                 Ichimoku1_CloseCondition, NULL, Ichimoku_SignalLevel, NULL);
-    ichimoku1_sparams.SetStops(Ichimoku_TrailingProfitMethod, Ichimoku_TrailingStopMethod);
-    ichimoku1_sparams.SetMaxSpread(Ichimoku1_MaxSpread);
-    ichimoku1_sparams.SetId(ICHIMOKU1);
-    return (new Stg_Ichimoku(ichimoku1_sparams, "Ichimoku1"));
-  }
-  static Stg_Ichimoku *Init_M5() {
-    ChartParams cparams5(PERIOD_M5);
-    IndicatorParams ichimoku_iparams(10, INDI_ICHIMOKU);
-    Ichimoku_Params ichimoku5_iparams(Ichimoku_Period_Tenkan_Sen, Ichimoku_Period_Kijun_Sen,
-                                      Ichimoku_Period_Senkou_Span_B);
-    StgParams ichimoku5_sparams(new Trade(PERIOD_M5, _Symbol),
-                                new Indi_Ichimoku(ichimoku5_iparams, ichimoku_iparams, cparams5), NULL, NULL);
-    ichimoku5_sparams.SetSignals(Ichimoku5_SignalMethod, Ichimoku5_OpenCondition1, Ichimoku5_OpenCondition2,
-                                 Ichimoku5_CloseCondition, NULL, Ichimoku_SignalLevel, NULL);
-    ichimoku5_sparams.SetStops(Ichimoku_TrailingProfitMethod, Ichimoku_TrailingStopMethod);
-    ichimoku5_sparams.SetMaxSpread(Ichimoku5_MaxSpread);
-    ichimoku5_sparams.SetId(ICHIMOKU5);
-    return (new Stg_Ichimoku(ichimoku5_sparams, "Ichimoku5"));
-  }
-  static Stg_Ichimoku *Init_M15() {
-    ChartParams cparams15(PERIOD_M15);
-    IndicatorParams ichimoku_iparams(10, INDI_ICHIMOKU);
-    Ichimoku_Params ichimoku15_iparams(Ichimoku_Period_Tenkan_Sen, Ichimoku_Period_Kijun_Sen,
-                                       Ichimoku_Period_Senkou_Span_B);
-    StgParams ichimoku15_sparams(new Trade(PERIOD_M15, _Symbol),
-                                 new Indi_Ichimoku(ichimoku15_iparams, ichimoku_iparams, cparams15), NULL, NULL);
-    ichimoku15_sparams.SetSignals(Ichimoku15_SignalMethod, Ichimoku15_OpenCondition1, Ichimoku15_OpenCondition2,
-                                  Ichimoku15_CloseCondition, NULL, Ichimoku_SignalLevel, NULL);
-    ichimoku15_sparams.SetStops(Ichimoku_TrailingProfitMethod, Ichimoku_TrailingStopMethod);
-    ichimoku15_sparams.SetMaxSpread(Ichimoku15_MaxSpread);
-    ichimoku15_sparams.SetId(ICHIMOKU15);
-    return (new Stg_Ichimoku(ichimoku15_sparams, "Ichimoku15"));
-  }
-  static Stg_Ichimoku *Init_M30() {
-    ChartParams cparams30(PERIOD_M30);
-    IndicatorParams ichimoku_iparams(10, INDI_ICHIMOKU);
-    Ichimoku_Params ichimoku30_iparams(Ichimoku_Period_Tenkan_Sen, Ichimoku_Period_Kijun_Sen,
-                                       Ichimoku_Period_Senkou_Span_B);
-    StgParams ichimoku30_sparams(new Trade(PERIOD_M30, _Symbol),
-                                 new Indi_Ichimoku(ichimoku30_iparams, ichimoku_iparams, cparams30), NULL, NULL);
-    ichimoku30_sparams.SetSignals(Ichimoku30_SignalMethod, Ichimoku30_OpenCondition1, Ichimoku30_OpenCondition2,
-                                  Ichimoku30_CloseCondition, NULL, Ichimoku_SignalLevel, NULL);
-    ichimoku30_sparams.SetStops(Ichimoku_TrailingProfitMethod, Ichimoku_TrailingStopMethod);
-    ichimoku30_sparams.SetMaxSpread(Ichimoku30_MaxSpread);
-    ichimoku30_sparams.SetId(ICHIMOKU30);
-    return (new Stg_Ichimoku(ichimoku30_sparams, "Ichimoku30"));
-  }
-  static Stg_Ichimoku *Init(ENUM_TIMEFRAMES _tf) {
+  static Stg_Ichimoku *Init(ENUM_TIMEFRAMES _tf = NULL, long _magic_no = NULL, ENUM_LOG_LEVEL _log_level = V_INFO) {
+    // Initialize strategy initial values.
+    Stg_Ichimoku_Params _params;
     switch (_tf) {
-      case PERIOD_M1:
-        return Init_M1();
-      case PERIOD_M5:
-        return Init_M5();
-      case PERIOD_M15:
-        return Init_M15();
-      case PERIOD_M30:
-        return Init_M30();
-      default:
-        return NULL;
+      case PERIOD_M1: {
+        Stg_Ichimoku_EURUSD_M1_Params _new_params;
+        _params = _new_params;
+      }
+      case PERIOD_M5: {
+        Stg_Ichimoku_EURUSD_M5_Params _new_params;
+        _params = _new_params;
+      }
+      case PERIOD_M15: {
+        Stg_Ichimoku_EURUSD_M15_Params _new_params;
+        _params = _new_params;
+      }
+      case PERIOD_M30: {
+        Stg_Ichimoku_EURUSD_M30_Params _new_params;
+        _params = _new_params;
+      }
+      case PERIOD_H1: {
+        Stg_Ichimoku_EURUSD_H1_Params _new_params;
+        _params = _new_params;
+      }
+      case PERIOD_H4: {
+        Stg_Ichimoku_EURUSD_H4_Params _new_params;
+        _params = _new_params;
+      }
     }
+    // Initialize strategy parameters.
+    ChartParams cparams(_tf);
+    Ichimoku_Params adx_params(_params.Ichimoku_Period, _params.Ichimoku_Applied_Price);
+    IndicatorParams adx_iparams(10, INDI_Ichimoku);
+    StgParams sparams(new Trade(_tf, _Symbol), new Indi_Ichimoku(adx_params, adx_iparams, cparams), NULL, NULL);
+    sparams.logger.SetLevel(_log_level);
+    sparams.SetMagicNo(_magic_no);
+    sparams.SetSignals(_params.Ichimoku_SignalBaseMethod, _params.Ichimoku_SignalOpenMethod1,
+                       _params.Ichimoku_SignalOpenMethod2, _params.Ichimoku_SignalCloseMethod1,
+                       _params.Ichimoku_SignalCloseMethod2, _params.Ichimoku_SignalOpenLevel,
+                       _params.Ichimoku_SignalCloseLevel);
+    sparams.SetStops(_params.Ichimoku_TrailingProfitMethod, _params.Ichimoku_TrailingStopMethod);
+    sparams.SetMaxSpread(_params.Ichimoku_MaxSpread);
+    // Initialize strategy instance.
+    Strategy *_strat = new Stg_Ichimoku(sparams, "Ichimoku");
+    return _strat;
   }
 
   /**
@@ -189,5 +191,13 @@ class Stg_Ichimoku : public Strategy {
         break;
     }
     return _result;
+  }
+
+  /**
+   * Check strategy's closing signal.
+   */
+  bool SignalClose(ENUM_ORDER_TYPE _cmd, long _signal_method = EMPTY, double _signal_level = EMPTY) {
+    if (_signal_level == EMPTY) _signal_level = GetSignalCloseLevel();
+    return SignalOpen(Order::NegateOrderType(_cmd), _signal_method, _signal_level);
   }
 };
