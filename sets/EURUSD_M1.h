@@ -12,15 +12,12 @@ struct Stg_Ichimoku_EURUSD_M1_Params : Stg_Ichimoku_Params {
     Ichimoku_Period = 32;
     Ichimoku_Applied_Price = 3;
     Ichimoku_Shift = 0;
-    Ichimoku_TrailingStopMethod = 6;
-    Ichimoku_TrailingProfitMethod = 11;
+    Ichimoku_SignalOpenMethod = 0;
     Ichimoku_SignalOpenLevel = 36;
-    Ichimoku_SignalBaseMethod = 0;
-    Ichimoku_SignalOpenMethod1 = 0;
-    Ichimoku_SignalOpenMethod2 = 0;
+    Ichimoku_SignalCloseMethod = 0;
     Ichimoku_SignalCloseLevel = 36;
-    Ichimoku_SignalCloseMethod1 = 0;
-    Ichimoku_SignalCloseMethod2 = 0;
+    Ichimoku_PriceLimitMethod = 0;
+    Ichimoku_PriceLimitLevel = 0;
     Ichimoku_MaxSpread = 2;
   }
 };
