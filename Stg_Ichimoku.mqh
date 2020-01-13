@@ -18,6 +18,7 @@ INPUT string __Ichimoku_Parameters__ = "-- Ichimoku strategy params --";  // >>>
 INPUT int Ichimoku_Period_Tenkan_Sen = 9;                                 // Period Tenkan Sen
 INPUT int Ichimoku_Period_Kijun_Sen = 26;                                 // Period Kijun Sen
 INPUT int Ichimoku_Period_Senkou_Span_B = 52;                             // Period Senkou Span B
+INPUT int Ichimoku_Shift = 0;                                             // Shift
 INPUT int Ichimoku_SignalOpenMethod = 0;                                  // Signal open method (0-
 INPUT double Ichimoku_SignalOpenLevel = 0.00000000;                       // Signal open level
 INPUT int Ichimoku_SignalCloseMethod = 0;                                 // Signal close method (0-
@@ -28,8 +29,9 @@ INPUT double Ichimoku_MaxSpread = 6.0;                                    // Max
 
 // Struct to define strategy parameters to override.
 struct Stg_Ichimoku_Params : Stg_Params {
-  unsigned int Ichimoku_Period;
-  ENUM_APPLIED_PRICE Ichimoku_Applied_Price;
+  int Ichimoku_Period_Tenkan_Sen;
+  int Ichimoku_Period_Kijun_Sen;
+  int Ichimoku_Period_Senkou_Span_B;
   int Ichimoku_Shift;
   int Ichimoku_SignalOpenMethod;
   double Ichimoku_SignalOpenLevel;
@@ -41,8 +43,9 @@ struct Stg_Ichimoku_Params : Stg_Params {
 
   // Constructor: Set default param values.
   Stg_Ichimoku_Params()
-      : Ichimoku_Period(::Ichimoku_Period),
-        Ichimoku_Applied_Price(::Ichimoku_Applied_Price),
+      : Ichimoku_Period_Tenkan_Sen(::Ichimoku_Period_Tenkan_Sen),
+        Ichimoku_Period_Kijun_Sen(::Ichimoku_Period_Kijun_Sen),
+        Ichimoku_Period_Senkou_Span_B(::Ichimoku_Period_Senkou_Span_B),
         Ichimoku_Shift(::Ichimoku_Shift),
         Ichimoku_SignalOpenMethod(::Ichimoku_SignalOpenMethod),
         Ichimoku_SignalOpenLevel(::Ichimoku_SignalOpenLevel),
@@ -96,9 +99,10 @@ class Stg_Ichimoku : public Strategy {
     }
     // Initialize strategy parameters.
     ChartParams cparams(_tf);
-    Ichimoku_Params adx_params(_params.Ichimoku_Period, _params.Ichimoku_Applied_Price);
-    IndicatorParams adx_iparams(10, INDI_Ichimoku);
-    StgParams sparams(new Trade(_tf, _Symbol), new Indi_Ichimoku(adx_params, adx_iparams, cparams), NULL, NULL);
+    Ichimoku_Params ichi_params(_params.Ichimoku_Period_Tenkan_Sen, _params.Ichimoku_Period_Kijun_Sen,
+                               _params.Ichimoku_Period_Senkou_Span_B);
+    IndicatorParams ichi_iparams(10, INDI_ICHIMOKU);
+    StgParams sparams(new Trade(_tf, _Symbol), new Indi_Ichimoku(ichi_params, ichi_iparams, cparams), NULL, NULL);
     sparams.logger.SetLevel(_log_level);
     sparams.SetMagicNo(_magic_no);
     sparams.SetSignals(_params.Ichimoku_SignalOpenMethod, _params.Ichimoku_SignalOpenMethod,
@@ -116,7 +120,7 @@ class Stg_Ichimoku : public Strategy {
    *   _cmd (int) - type of trade order command
    *   period (int) - period to check for
    *   _method (int) - signal method to use by using bitwise AND operation
-   *   _level1 (double) - signal level to consider the signal
+   *   _level (double) - signal level to consider the signal
    */
   bool SignalOpen(ENUM_ORDER_TYPE _cmd, int _method = 0, double _level = 0.0) {
     bool _result = false;
@@ -135,8 +139,6 @@ class Stg_Ichimoku : public Strategy {
     double ichimoku_2_senkou_span_a = ((Indi_Ichimoku *)this.Data()).GetValue(LINE_SENKOUSPANA, 2);
     double ichimoku_2_senkou_span_b = ((Indi_Ichimoku *)this.Data()).GetValue(LINE_SENKOUSPANB, 2);
     double ichimoku_2_chikou_span = ((Indi_Ichimoku *)this.Data()).GetValue(LINE_CHIKOUSPAN, 2);
-    if (_level1 == EMPTY) _level1 = GetSignalLevel1();
-    if (_level2 == EMPTY) _level2 = GetSignalLevel2();
     switch (_cmd) {
       /*
         //15. Ichimoku Kinko Hyo (1)

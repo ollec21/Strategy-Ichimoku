@@ -9,8 +9,9 @@ struct Stg_Ichimoku_EURUSD_H4_Params : Stg_Ichimoku_Params {
   Stg_Ichimoku_EURUSD_H4_Params() {
     symbol = "EURUSD";
     tf = PERIOD_H4;
-    Ichimoku_Period = 2;
-    Ichimoku_Applied_Price = 3;
+    Ichimoku_Period_Tenkan_Sen = 9;
+    Ichimoku_Period_Kijun_Sen = 26;
+    Ichimoku_Period_Senkou_Span_B = 52;
     Ichimoku_Shift = 0;
     Ichimoku_SignalOpenMethod = 0;
     Ichimoku_SignalOpenLevel = 36;
