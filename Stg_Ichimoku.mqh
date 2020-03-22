@@ -107,62 +107,29 @@ class Stg_Ichimoku : public Strategy {
    *   _level (double) - signal level to consider the signal
    */
   bool SignalOpen(ENUM_ORDER_TYPE _cmd, int _method = 0, double _level = 0.0) {
-    bool _result = false;
-    double ichimoku_0_tenkan_sen = ((Indi_Ichimoku *)this.Data()).GetValue(LINE_TENKANSEN, 0);
-    double ichimoku_0_kijun_sen = ((Indi_Ichimoku *)this.Data()).GetValue(LINE_KIJUNSEN, 0);
-    double ichimoku_0_senkou_span_a = ((Indi_Ichimoku *)this.Data()).GetValue(LINE_SENKOUSPANA, 0);
-    double ichimoku_0_senkou_span_b = ((Indi_Ichimoku *)this.Data()).GetValue(LINE_SENKOUSPANB, 0);
-    double ichimoku_0_chikou_span = ((Indi_Ichimoku *)this.Data()).GetValue(LINE_CHIKOUSPAN, 0);
-    double ichimoku_1_tenkan_sen = ((Indi_Ichimoku *)this.Data()).GetValue(LINE_TENKANSEN, 1);
-    double ichimoku_1_kijun_sen = ((Indi_Ichimoku *)this.Data()).GetValue(LINE_KIJUNSEN, 1);
-    double ichimoku_1_senkou_span_a = ((Indi_Ichimoku *)this.Data()).GetValue(LINE_SENKOUSPANA, 1);
-    double ichimoku_1_senkou_span_b = ((Indi_Ichimoku *)this.Data()).GetValue(LINE_SENKOUSPANB, 1);
-    double ichimoku_1_chikou_span = ((Indi_Ichimoku *)this.Data()).GetValue(LINE_CHIKOUSPAN, 1);
-    double ichimoku_2_tenkan_sen = ((Indi_Ichimoku *)this.Data()).GetValue(LINE_TENKANSEN, 2);
-    double ichimoku_2_kijun_sen = ((Indi_Ichimoku *)this.Data()).GetValue(LINE_KIJUNSEN, 2);
-    double ichimoku_2_senkou_span_a = ((Indi_Ichimoku *)this.Data()).GetValue(LINE_SENKOUSPANA, 2);
-    double ichimoku_2_senkou_span_b = ((Indi_Ichimoku *)this.Data()).GetValue(LINE_SENKOUSPANB, 2);
-    double ichimoku_2_chikou_span = ((Indi_Ichimoku *)this.Data()).GetValue(LINE_CHIKOUSPAN, 2);
-    switch (_cmd) {
-      /*
-        //15. Ichimoku Kinko Hyo (1)
-        //Buy: Price crosses Senkou Span-B upwards; price is outside Senkou Span cloud
-        //Sell: Price crosses Senkou Span-B downwards; price is outside Senkou Span cloud
-        if
-        (iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_SENKOUSPANB,1)>iClose(NULL,pich2,1)&&iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_SENKOUSPANB,0)<=iClose(NULL,pich2,0)&&iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_SENKOUSPANA,0)<iClose(NULL,pich2,0))
-        {f15=1;}
-        if
-        (iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_SENKOUSPANB,1)<iClose(NULL,pich2,1)&&iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_SENKOUSPANB,0)>=iClose(NULL,pich2,0)&&iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_SENKOUSPANA,0)>iClose(NULL,pich2,0))
-        {f15=-1;}
-      */
-      /*
-        //16. Ichimoku Kinko Hyo (2)
-        //Buy: Tenkan-sen crosses Kijun-sen upwards
-        //Sell: Tenkan-sen crosses Kijun-sen downwards
-        //VEIchimokuON EXISTS, IN THIS CASE PRICE MUSTN'T BE IN THE CLOUD!
-        if
-        (iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_TENKANSEN,1)<iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_KIJUNSEN,1)&&iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_TENKANSEN,0)>=iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_KIJUNSEN,0))
-        {f16=1;}
-        if
-        (iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_TENKANSEN,1)>iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_KIJUNSEN,1)&&iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_TENKANSEN,0)<=iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_KIJUNSEN,0))
-        {f16=-1;}
-      */
-
-      /*
-        //17. Ichimoku Kinko Hyo (3)
-        //Buy: Chinkou Span crosses chart upwards; price is ib the cloud
-        //Sell: Chinkou Span crosses chart downwards; price is ib the cloud
-        if
-        ((iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_CHINKOUSPAN,pkijun+1)<iClose(NULL,pich2,pkijun+1)&&iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_CHINKOUSPAN,pkijun+0)>=iClose(NULL,pich2,pkijun+0))&&((iClose(NULL,pich2,0)>iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_SENKOUSPANA,0)&&iClose(NULL,pich2,0)<iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_SENKOUSPANB,0))||(iClose(NULL,pich2,0)<iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_SENKOUSPANA,0)&&iClose(NULL,pich2,0)>iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_SENKOUSPANB,0))))
-        {f17=1;}
-        if
-        ((iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_CHINKOUSPAN,pkijun+1)>iClose(NULL,pich2,pkijun+1)&&iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_CHINKOUSPAN,pkijun+0)<=iClose(NULL,pich2,pkijun+0))&&((iClose(NULL,pich2,0)>iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_SENKOUSPANA,0)&&iClose(NULL,pich2,0)<iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_SENKOUSPANB,0))||(iClose(NULL,pich2,0)<iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_SENKOUSPANA,0)&&iClose(NULL,pich2,0)>iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_SENKOUSPANB,0))))
-        {f17=-1;}
-      */
-      case ORDER_TYPE_BUY:
-        break;
-      case ORDER_TYPE_SELL:
-        break;
+    Indicator *_indi = Data();
+    bool _is_valid = _indi[CURR].IsValid() && _indi[PREV].IsValid() && _indi[PPREV].IsValid();
+    bool _result = _is_valid;
+    double _level_pips = _level * Chart().GetPipSize();
+    if (_is_valid) {
+      switch (_cmd) {
+        case ORDER_TYPE_BUY:
+          // Buy 1: Tenkan-sen crosses Kijun-sen upwards.
+          _result = _indi[CURR].value[LINE_TENKANSEN] >= _indi[CURR].value[LINE_CHIKOUSPAN] && _indi[PREV].value[LINE_TENKANSEN] < _indi[PREV].value[LINE_CHIKOUSPAN];
+          // Buy 2: Chinkou Span crosses chart upwards; price is ib the cloud.
+          // @todo: if ((iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_CHINKOUSPAN,pkijun+1)<iClose(NULL,pich2,pkijun+1)&&iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_CHINKOUSPAN,pkijun+0)>=iClose(NULL,pich2,pkijun+0))&&((iClose(NULL,pich2,0)>iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_SENKOUSPANA,0)&&iClose(NULL,pich2,0)<iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_SENKOUSPANB,0))||(iClose(NULL,pich2,0)<iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_SENKOUSPANA,0)&&iClose(NULL,pich2,0)>iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_SENKOUSPANB,0))))
+          // Buy 3: Price crosses Senkou Span-B upwards; price is outside Senkou Span cloud.
+          // @todo: (iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_SENKOUSPANB,1)>iClose(NULL,pich2,1)&&iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_SENKOUSPANB,0)<=iClose(NULL,pich2,0)&&iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_SENKOUSPANA,0)<iClose(NULL,pich2,0))
+          break;
+        case ORDER_TYPE_SELL:
+          // Sell 1: Tenkan-sen crosses Kijun-sen downwards.
+          _result = _indi[CURR].value[LINE_TENKANSEN] <= _indi[CURR].value[LINE_CHIKOUSPAN] && _indi[PREV].value[LINE_TENKANSEN] > _indi[PREV].value[LINE_CHIKOUSPAN];
+          // Sell 2: Chinkou Span crosses chart downwards; price is ib the cloud.
+          // @todo: ((iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_CHINKOUSPAN,pkijun+1)>iClose(NULL,pich2,pkijun+1)&&iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_CHINKOUSPAN,pkijun+0)<=iClose(NULL,pich2,pkijun+0))&&((iClose(NULL,pich2,0)>iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_SENKOUSPANA,0)&&iClose(NULL,pich2,0)<iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_SENKOUSPANB,0))||(iClose(NULL,pich2,0)<iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_SENKOUSPANA,0)&&iClose(NULL,pich2,0)>iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_SENKOUSPANB,0))))
+          // Sell 3: Price crosses Senkou Span-B downwards; price is outside Senkou Span cloud.
+          // @todo: (iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_SENKOUSPANB,1)<iClose(NULL,pich2,1)&&iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_SENKOUSPANB,0)>=iClose(NULL,pich2,0)&&iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_SENKOUSPANA,0)>iClose(NULL,pich2,0))
+          break;
+      }
     }
     return _result;
   }
@@ -210,13 +177,38 @@ class Stg_Ichimoku : public Strategy {
    * Gets price limit value for profit take or stop loss.
    */
   double PriceLimit(ENUM_ORDER_TYPE _cmd, ENUM_ORDER_TYPE_VALUE _mode, int _method = 0, double _level = 0.0) {
+    Indicator *_indi = Data();
+    bool _is_valid = _indi[CURR].IsValid() && _indi[PREV].IsValid() && _indi[PPREV].IsValid();
     double _trail = _level * Market().GetPipSize();
-    int _direction = Order::OrderDirection(_cmd) * (_mode == ORDER_TYPE_SL ? -1 : 1);
+    int _direction = Order::OrderDirection(_cmd, _mode);
     double _default_value = Market().GetCloseOffer(_cmd) + _trail * _method * _direction;
     double _result = _default_value;
-    switch (_method) {
-      case 0: {
-        // @todo
+    if (_is_valid) {
+      switch (_method) {
+        case 0:
+          _result = _indi[CURR].value[LINE_TENKANSEN] + _trail * _direction;
+          break;
+        case 1:
+          _result = _indi[CURR].value[LINE_KIJUNSEN] + _trail * _direction;
+          break;
+        case 2:
+          _result = _indi[CURR].value[LINE_SENKOUSPANA] + _trail * _direction;
+          break;
+        case 3:
+          _result = _indi[CURR].value[LINE_SENKOUSPANB] + _trail * _direction;
+          break;
+        case 4:
+          _result = _indi[CURR].value[LINE_CHIKOUSPAN] + _trail * _direction;
+          break;
+        case 5:
+          _result = _indi[CURR].value[LINE_CHIKOUSPAN] + _trail * _direction;
+          break;
+        case 6:
+          _result = _indi[CURR].value.GetMinDbl(_indi.GetDataType()) + _trail * _direction;
+          break;
+        case 7:
+          _result = _indi[PREV].value.GetMinDbl(_indi.GetDataType()) + _trail * _direction;
+          break;
       }
     }
     return _result;
