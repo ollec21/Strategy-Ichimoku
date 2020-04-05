@@ -91,6 +91,7 @@ class Stg_Ichimoku : public Strategy {
     sparams.SetSignals(_params.Ichimoku_SignalOpenMethod, _params.Ichimoku_SignalOpenMethod,
                        _params.Ichimoku_SignalOpenFilterMethod, _params.Ichimoku_SignalOpenBoostMethod,
                        _params.Ichimoku_SignalCloseMethod, _params.Ichimoku_SignalCloseMethod);
+    sparams.SetPriceLimits(_params.Ichimoku_PriceLimitMethod, _params.Ichimoku_PriceLimitLevel);
     sparams.SetMaxSpread(_params.Ichimoku_MaxSpread);
     // Initialize strategy instance.
     Strategy *_strat = new Stg_Ichimoku(sparams, "Ichimoku");
