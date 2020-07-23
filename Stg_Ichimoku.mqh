@@ -86,7 +86,7 @@ class Stg_Ichimoku : public Strategy {
                                 _params.Ichimoku_Period_Senkou_Span_B);
     ichi_params.SetTf(_tf);
     StgParams sparams(new Trade(_tf, _Symbol), new Indi_Ichimoku(ichi_params), NULL, NULL);
-    sparams.logger.SetLevel(_log_level);
+    sparams.logger.Ptr().SetLevel(_log_level);
     sparams.SetMagicNo(_magic_no);
     sparams.SetSignals(_params.Ichimoku_SignalOpenMethod, _params.Ichimoku_SignalOpenMethod,
                        _params.Ichimoku_SignalOpenFilterMethod, _params.Ichimoku_SignalOpenBoostMethod,
