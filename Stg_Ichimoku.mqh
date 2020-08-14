@@ -9,14 +9,14 @@ INPUT int Ichimoku_Period_Kijun_Sen = 26;                // Period Kijun Sen
 INPUT int Ichimoku_Period_Senkou_Span_B = 52;            // Period Senkou Span B
 INPUT int Ichimoku_Shift = 0;                            // Shift
 INPUT int Ichimoku_SignalOpenMethod = 0;                 // Signal open method (0-
-INPUT float Ichimoku_SignalOpenLevel = 0.00000000;      // Signal open level
+INPUT float Ichimoku_SignalOpenLevel = 0.00000000;       // Signal open level
 INPUT int Ichimoku_SignalOpenFilterMethod = 0.00000000;  // Signal open filter method
 INPUT int Ichimoku_SignalOpenBoostMethod = 0.00000000;   // Signal open boost method
 INPUT int Ichimoku_SignalCloseMethod = 0;                // Signal close method (0-
-INPUT float Ichimoku_SignalCloseLevel = 0.00000000;     // Signal close level
+INPUT float Ichimoku_SignalCloseLevel = 0.00000000;      // Signal close level
 INPUT int Ichimoku_PriceLimitMethod = 0;                 // Price limit method
-INPUT float Ichimoku_PriceLimitLevel = 0;               // Price limit level
-INPUT float Ichimoku_MaxSpread = 6.0;                   // Max spread to trade (pips)
+INPUT float Ichimoku_PriceLimitLevel = 0;                // Price limit level
+INPUT float Ichimoku_MaxSpread = 6.0;                    // Max spread to trade (pips)
 
 // Includes.
 #include <EA31337-classes/Indicators/Indi_Ichimoku.mqh>
@@ -29,14 +29,14 @@ struct Stg_Ichimoku_Params : StgParams {
   int Ichimoku_Period_Senkou_Span_B;
   int Ichimoku_Shift;
   int Ichimoku_SignalOpenMethod;
-  double Ichimoku_SignalOpenLevel;
+  float Ichimoku_SignalOpenLevel;
   int Ichimoku_SignalOpenFilterMethod;
   int Ichimoku_SignalOpenBoostMethod;
   int Ichimoku_SignalCloseMethod;
-  double Ichimoku_SignalCloseLevel;
+  float Ichimoku_SignalCloseLevel;
   int Ichimoku_PriceLimitMethod;
-  double Ichimoku_PriceLimitLevel;
-  double Ichimoku_MaxSpread;
+  float Ichimoku_PriceLimitLevel;
+  float Ichimoku_MaxSpread;
 
   // Constructor: Set default param values.
   Stg_Ichimoku_Params()
@@ -190,6 +190,6 @@ class Stg_Ichimoku : public Strategy {
         }
       }
     }
-    return _result;
+    return (float)_result;
   }
 };
