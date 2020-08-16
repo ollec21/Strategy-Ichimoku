@@ -1,22 +1,27 @@
-//+------------------------------------------------------------------+
-//|                  EA31337 - multi-strategy advanced trading robot |
-//|                       Copyright 2016-2020, 31337 Investments Ltd |
-//|                                       https://github.com/EA31337 |
-//+------------------------------------------------------------------+
+/*
+ * @file
+ * Defines default strategy parameter values for the given timeframe.
+ */
+
+// Defines indicator's parameter values for the given pair symbol and timeframe.
+struct Indi_Ichimoku_Params_M30 : Indi_Ichimoku_Params {
+  Indi_Ichimoku_Params_M30() : Indi_Ichimoku_Params(indi_ichi_defaults, PERIOD_M30) { shift = 0; }
+} indi_ichi_m30;
 
 // Defines strategy's parameter values for the given pair symbol and timeframe.
-struct Stg_Ichimoku_EURUSD_M30_Params : Stg_Ichimoku_Params {
-  Stg_Ichimoku_EURUSD_M30_Params() {
-    Ichimoku_Period_Tenkan_Sen = 9;
-    Ichimoku_Period_Kijun_Sen = 26;
-    Ichimoku_Period_Senkou_Span_B = 52;
-    Ichimoku_Shift = 0;
-    Ichimoku_SignalOpenMethod = 0;
-    Ichimoku_SignalOpenLevel = 36;
-    Ichimoku_SignalCloseMethod = 1;
-    Ichimoku_SignalCloseLevel = 36;
-    Ichimoku_PriceLimitMethod = 0;
-    Ichimoku_PriceLimitLevel = 0;
-    Ichimoku_MaxSpread = 5;
+struct Stg_Ichimoku_Params_M30 : StgParams {
+  // Struct constructor.
+  Stg_Ichimoku_Params_M30() : StgParams(stg_ichi_defaults) {
+    lot_size = 0;
+    signal_open_method = 0;
+    signal_open_filter = 1;
+    signal_open_level = 0;
+    signal_open_boost = 0;
+    signal_close_method = 0;
+    signal_close_level = 0;
+    price_limit_method = 0;
+    price_limit_level = 2;
+    tick_filter_method = 1;
+    max_spread = 0;
   }
 } stg_ichi_m30;

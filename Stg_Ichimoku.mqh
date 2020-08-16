@@ -3,11 +3,12 @@
  * Implements Ichimoku strategy based on the Ichimoku Kinko Hyo indicator.
  */
 
+// Includes.
+#include <EA31337-classes/Indicators/Indi_Ichimoku.mqh>
+#include <EA31337-classes/Strategy.mqh>
+
 // User input params.
-INPUT int Ichimoku_Period_Tenkan_Sen = 9;                // Period Tenkan Sen
-INPUT int Ichimoku_Period_Kijun_Sen = 26;                // Period Kijun Sen
-INPUT int Ichimoku_Period_Senkou_Span_B = 52;            // Period Senkou Span B
-INPUT int Ichimoku_Shift = 0;                            // Shift
+INPUT float Ichimoku_LotSize = 0;                        // Lot size
 INPUT int Ichimoku_SignalOpenMethod = 0;                 // Signal open method (0-
 INPUT float Ichimoku_SignalOpenLevel = 0.00000000;       // Signal open level
 INPUT int Ichimoku_SignalOpenFilterMethod = 0.00000000;  // Signal open filter method
@@ -16,48 +17,56 @@ INPUT int Ichimoku_SignalCloseMethod = 0;                // Signal close method 
 INPUT float Ichimoku_SignalCloseLevel = 0.00000000;      // Signal close level
 INPUT int Ichimoku_PriceLimitMethod = 0;                 // Price limit method
 INPUT float Ichimoku_PriceLimitLevel = 0;                // Price limit level
+INPUT int Ichimoku_TickFilterMethod = 0;                 // Tick filter method
 INPUT float Ichimoku_MaxSpread = 6.0;                    // Max spread to trade (pips)
+INPUT int Ichimoku_Shift = 0;                            // Shift
+INPUT string __Ichimoku_Indi_Ichimoku_Parameters__ =
+    "-- Ichimoku strategy: Ichimoku indicator params --";  // >>> Ichimoku strategy: Ichimoku indicator <<<
+INPUT int Indi_Ichimoku_Period_Tenkan_Sen = 9;             // Period Tenkan Sen
+INPUT int Indi_Ichimoku_Period_Kijun_Sen = 26;             // Period Kijun Sen
+INPUT int Indi_Ichimoku_Period_Senkou_Span_B = 52;         // Period Senkou Span B
 
-// Includes.
-#include <EA31337-classes/Indicators/Indi_Ichimoku.mqh>
-#include <EA31337-classes/Strategy.mqh>
+// Structs.
+
+// Defines struct with default user indicator values.
+struct Indi_Ichimoku_Params_Defaults : IchimokuParams {
+  Indi_Ichimoku_Params_Defaults()
+      : IchimokuParams(::Indi_Ichimoku_Period_Tenkan_Sen, ::Indi_Ichimoku_Period_Kijun_Sen,
+                       ::Indi_Ichimoku_Period_Senkou_Span_B) {}
+} indi_ichi_defaults;
+
+// Defines struct to store indicator parameter values.
+struct Indi_Ichimoku_Params : public IchimokuParams {
+  // Struct constructors.
+  void Indi_Ichimoku_Params(IchimokuParams &_params, ENUM_TIMEFRAMES _tf) : IchimokuParams(_params, _tf) {}
+};
+
+// Defines struct with default user strategy values.
+struct Stg_Ichimoku_Params_Defaults : StgParams {
+  Stg_Ichimoku_Params_Defaults()
+      : StgParams(::Ichimoku_SignalOpenMethod, ::Ichimoku_SignalOpenFilterMethod, ::Ichimoku_SignalOpenLevel,
+                  ::Ichimoku_SignalOpenBoostMethod, ::Ichimoku_SignalCloseMethod, ::Ichimoku_SignalCloseLevel,
+                  ::Ichimoku_PriceLimitMethod, ::Ichimoku_PriceLimitLevel, ::Ichimoku_TickFilterMethod,
+                  ::Ichimoku_MaxSpread, ::Ichimoku_Shift) {}
+} stg_ichi_defaults;
 
 // Struct to define strategy parameters to override.
 struct Stg_Ichimoku_Params : StgParams {
-  int Ichimoku_Period_Tenkan_Sen;
-  int Ichimoku_Period_Kijun_Sen;
-  int Ichimoku_Period_Senkou_Span_B;
-  int Ichimoku_Shift;
-  int Ichimoku_SignalOpenMethod;
-  float Ichimoku_SignalOpenLevel;
-  int Ichimoku_SignalOpenFilterMethod;
-  int Ichimoku_SignalOpenBoostMethod;
-  int Ichimoku_SignalCloseMethod;
-  float Ichimoku_SignalCloseLevel;
-  int Ichimoku_PriceLimitMethod;
-  float Ichimoku_PriceLimitLevel;
-  float Ichimoku_MaxSpread;
+  Indi_Ichimoku_Params iparams;
+  StgParams sparams;
 
-  // Constructor: Set default param values.
-  Stg_Ichimoku_Params()
-      : Ichimoku_Period_Tenkan_Sen(::Ichimoku_Period_Tenkan_Sen),
-        Ichimoku_Period_Kijun_Sen(::Ichimoku_Period_Kijun_Sen),
-        Ichimoku_Period_Senkou_Span_B(::Ichimoku_Period_Senkou_Span_B),
-        Ichimoku_Shift(::Ichimoku_Shift),
-        Ichimoku_SignalOpenMethod(::Ichimoku_SignalOpenMethod),
-        Ichimoku_SignalOpenLevel(::Ichimoku_SignalOpenLevel),
-        Ichimoku_SignalOpenFilterMethod(::Ichimoku_SignalOpenFilterMethod),
-        Ichimoku_SignalOpenBoostMethod(::Ichimoku_SignalOpenBoostMethod),
-        Ichimoku_SignalCloseMethod(::Ichimoku_SignalCloseMethod),
-        Ichimoku_SignalCloseLevel(::Ichimoku_SignalCloseLevel),
-        Ichimoku_PriceLimitMethod(::Ichimoku_PriceLimitMethod),
-        Ichimoku_PriceLimitLevel(::Ichimoku_PriceLimitLevel),
-        Ichimoku_MaxSpread(::Ichimoku_MaxSpread) {}
+  // Struct constructors.
+  Stg_Ichimoku_Params(Indi_Ichimoku_Params &_iparams, StgParams &_sparams)
+      : iparams(indi_ichi_defaults, _iparams.tf), sparams(stg_ichi_defaults) {
+    iparams = _iparams;
+    sparams = _sparams;
+  }
 };
 
 // Loads pair specific param values.
 #include "sets/EURUSD_H1.h"
 #include "sets/EURUSD_H4.h"
+#include "sets/EURUSD_H8.h"
 #include "sets/EURUSD_M1.h"
 #include "sets/EURUSD_M15.h"
 #include "sets/EURUSD_M30.h"
@@ -69,25 +78,24 @@ class Stg_Ichimoku : public Strategy {
 
   static Stg_Ichimoku *Init(ENUM_TIMEFRAMES _tf = NULL, long _magic_no = NULL, ENUM_LOG_LEVEL _log_level = V_INFO) {
     // Initialize strategy initial values.
-    Stg_Ichimoku_Params _params;
+    Indi_Ichimoku_Params _indi_params(indi_ichi_defaults, _tf);
+    StgParams _stg_params(stg_ichi_defaults);
     if (!Terminal::IsOptimization()) {
-      SetParamsByTf<Stg_Ichimoku_Params>(_params, _tf, stg_ichi_m1, stg_ichi_m5, stg_ichi_m15, stg_ichi_m30,
-                                         stg_ichi_h1, stg_ichi_h4, stg_ichi_h4);
+      SetParamsByTf<Indi_Ichimoku_Params>(_indi_params, _tf, indi_ichi_m1, indi_ichi_m5, indi_ichi_m15, indi_ichi_m30,
+                                          indi_ichi_h1, indi_ichi_h4, indi_ichi_h8);
+      SetParamsByTf<StgParams>(_stg_params, _tf, stg_ichi_m1, stg_ichi_m5, stg_ichi_m15, stg_ichi_m30, stg_ichi_h1,
+                               stg_ichi_h4, stg_ichi_h8);
     }
+    // Initialize indicator.
+    IchimokuParams ichi_params(_indi_params);
+    _stg_params.SetIndicator(new Indi_Ichimoku(_indi_params));
     // Initialize strategy parameters.
-    IchimokuParams ichi_params(_params.Ichimoku_Period_Tenkan_Sen, _params.Ichimoku_Period_Kijun_Sen,
-                               _params.Ichimoku_Period_Senkou_Span_B);
-    ichi_params.SetTf(_tf);
-    StgParams sparams(new Trade(_tf, _Symbol), new Indi_Ichimoku(ichi_params), NULL, NULL);
-    sparams.logger.Ptr().SetLevel(_log_level);
-    sparams.SetMagicNo(_magic_no);
-    sparams.SetSignals(_params.Ichimoku_SignalOpenMethod, _params.Ichimoku_SignalOpenMethod,
-                       _params.Ichimoku_SignalOpenFilterMethod, _params.Ichimoku_SignalOpenBoostMethod,
-                       _params.Ichimoku_SignalCloseMethod, _params.Ichimoku_SignalCloseMethod);
-    sparams.SetPriceLimits(_params.Ichimoku_PriceLimitMethod, _params.Ichimoku_PriceLimitLevel);
-    sparams.SetMaxSpread(_params.Ichimoku_MaxSpread);
+    _stg_params.GetLog().SetLevel(_log_level);
+    _stg_params.SetMagicNo(_magic_no);
+    _stg_params.SetTf(_tf, _Symbol);
     // Initialize strategy instance.
-    Strategy *_strat = new Stg_Ichimoku(sparams, "Ichimoku");
+    Strategy *_strat = new Stg_Ichimoku(_stg_params, "Ichimoku");
+    _stg_params.SetStops(_strat, _strat);
     return _strat;
   }
 
@@ -171,21 +179,21 @@ class Stg_Ichimoku : public Strategy {
           _result = _indi[PREV].value.GetMinDbl(_indi.GetIDataType()) + _trail * _direction;
           break;
         case 8: {
-          int _bar_count = (int)_level * (int)_indi.GetTenkanSen();
-          _result = _direction > 0 ? _indi.GetPrice(PRICE_HIGH, _indi.GetHighest(_bar_count))
-                                   : _indi.GetPrice(PRICE_LOW, _indi.GetLowest(_bar_count));
+          int _bar_count1 = (int)_level * (int)_indi.GetTenkanSen();
+          _result = _direction > 0 ? _indi.GetPrice(PRICE_HIGH, _indi.GetHighest(_bar_count1))
+                                   : _indi.GetPrice(PRICE_LOW, _indi.GetLowest(_bar_count1));
           break;
         }
         case 9: {
-          int _bar_count = (int)_level * (int)_indi.GetKijunSen();
-          _result = _direction > 0 ? _indi.GetPrice(PRICE_HIGH, _indi.GetHighest(_bar_count))
-                                   : _indi.GetPrice(PRICE_LOW, _indi.GetLowest(_bar_count));
+          int _bar_count2 = (int)_level * (int)_indi.GetKijunSen();
+          _result = _direction > 0 ? _indi.GetPrice(PRICE_HIGH, _indi.GetHighest(_bar_count2))
+                                   : _indi.GetPrice(PRICE_LOW, _indi.GetLowest(_bar_count2));
           break;
         }
         case 10: {
-          int _bar_count = (int)_level * (int)_indi.GetSenkouSpanB();
-          _result = _direction > 0 ? _indi.GetPrice(PRICE_HIGH, _indi.GetHighest(_bar_count))
-                                   : _indi.GetPrice(PRICE_LOW, _indi.GetLowest(_bar_count));
+          int _bar_count3 = (int)_level * (int)_indi.GetSenkouSpanB();
+          _result = _direction > 0 ? _indi.GetPrice(PRICE_HIGH, _indi.GetHighest(_bar_count3))
+                                   : _indi.GetPrice(PRICE_LOW, _indi.GetLowest(_bar_count3));
           break;
         }
       }
