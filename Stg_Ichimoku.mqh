@@ -154,43 +154,43 @@ class Stg_Ichimoku : public Strategy {
     double _result = _default_value;
     if (_is_valid) {
       switch (_method) {
-        case 0:
+        case 1:
           _result = _indi[CURR].value[LINE_TENKANSEN] + _trail * _direction;
           break;
-        case 1:
+        case 2:
           _result = _indi[CURR].value[LINE_KIJUNSEN] + _trail * _direction;
           break;
-        case 2:
+        case 3:
           _result = _indi[CURR].value[LINE_SENKOUSPANA] + _trail * _direction;
           break;
-        case 3:
-          _result = _indi[CURR].value[LINE_SENKOUSPANB] + _trail * _direction;
-          break;
         case 4:
-          _result = _indi[CURR].value[LINE_CHIKOUSPAN] + _trail * _direction;
+          _result = _indi[CURR].value[LINE_SENKOUSPANB] + _trail * _direction;
           break;
         case 5:
           _result = _indi[CURR].value[LINE_CHIKOUSPAN] + _trail * _direction;
           break;
         case 6:
-          _result = _indi[CURR].value.GetMinDbl(_indi.GetIDataType()) + _trail * _direction;
+          _result = _indi[CURR].value[LINE_CHIKOUSPAN] + _trail * _direction;
           break;
         case 7:
+          _result = _indi[CURR].value.GetMinDbl(_indi.GetIDataType()) + _trail * _direction;
+          break;
+        case 8:
           _result = _indi[PREV].value.GetMinDbl(_indi.GetIDataType()) + _trail * _direction;
           break;
-        case 8: {
+        case 9: {
           int _bar_count1 = (int)_level * (int)_indi.GetTenkanSen();
           _result = _direction > 0 ? _indi.GetPrice(PRICE_HIGH, _indi.GetHighest(_bar_count1))
                                    : _indi.GetPrice(PRICE_LOW, _indi.GetLowest(_bar_count1));
           break;
         }
-        case 9: {
+        case 10: {
           int _bar_count2 = (int)_level * (int)_indi.GetKijunSen();
           _result = _direction > 0 ? _indi.GetPrice(PRICE_HIGH, _indi.GetHighest(_bar_count2))
                                    : _indi.GetPrice(PRICE_LOW, _indi.GetLowest(_bar_count2));
           break;
         }
-        case 10: {
+        case 11: {
           int _bar_count3 = (int)_level * (int)_indi.GetSenkouSpanB();
           _result = _direction > 0 ? _indi.GetPrice(PRICE_HIGH, _indi.GetHighest(_bar_count3))
                                    : _indi.GetPrice(PRICE_LOW, _indi.GetLowest(_bar_count3));
