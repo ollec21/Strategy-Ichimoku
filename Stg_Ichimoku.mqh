@@ -3,10 +3,6 @@
  * Implements Ichimoku strategy based on the Ichimoku Kinko Hyo indicator.
  */
 
-// Includes.
-#include <EA31337-classes/Indicators/Indi_Ichimoku.mqh>
-#include <EA31337-classes/Strategy.mqh>
-
 // User input params.
 INPUT float Ichimoku_LotSize = 0;                        // Lot size
 INPUT int Ichimoku_SignalOpenMethod = 0;                 // Signal open method (0-
