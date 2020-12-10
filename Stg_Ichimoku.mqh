@@ -113,8 +113,8 @@ class Stg_Ichimoku : public Strategy {
       switch (_cmd) {
         case ORDER_TYPE_BUY:
           // Buy 1: Tenkan-sen crosses Kijun-sen upwards.
-          _result = _indi[CURR][LINE_TENKANSEN] >= _indi[CURR][LINE_CHIKOUSPAN] &&
-                    _indi[PREV][LINE_TENKANSEN] < _indi[PREV][LINE_CHIKOUSPAN];
+          _result = _indi[CURR][(int)LINE_TENKANSEN] >= _indi[CURR][(int)LINE_CHIKOUSPAN] &&
+                    _indi[PREV][(int)LINE_TENKANSEN] < _indi[PREV][(int)LINE_CHIKOUSPAN];
           // Buy 2: Chinkou Span crosses chart upwards; price is ib the cloud.
           // @todo: if
           // ((iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_CHINKOUSPAN,pkijun+1)<iClose(NULL,pich2,pkijun+1)&&iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_CHINKOUSPAN,pkijun+0)>=iClose(NULL,pich2,pkijun+0))&&((iClose(NULL,pich2,0)>iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_SENKOUSPANA,0)&&iClose(NULL,pich2,0)<iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_SENKOUSPANB,0))||(iClose(NULL,pich2,0)<iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_SENKOUSPANA,0)&&iClose(NULL,pich2,0)>iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_SENKOUSPANB,0))))
@@ -124,8 +124,8 @@ class Stg_Ichimoku : public Strategy {
           break;
         case ORDER_TYPE_SELL:
           // Sell 1: Tenkan-sen crosses Kijun-sen downwards.
-          _result = _indi[CURR][LINE_TENKANSEN] <= _indi[CURR][LINE_CHIKOUSPAN] &&
-                    _indi[PREV][LINE_TENKANSEN] > _indi[PREV][LINE_CHIKOUSPAN];
+          _result = _indi[CURR][(int)LINE_TENKANSEN] <= _indi[CURR][(int)LINE_CHIKOUSPAN] &&
+                    _indi[PREV][(int)LINE_TENKANSEN] > _indi[PREV][(int)LINE_CHIKOUSPAN];
           // Sell 2: Chinkou Span crosses chart downwards; price is ib the cloud.
           // @todo:
           // ((iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_CHINKOUSPAN,pkijun+1)>iClose(NULL,pich2,pkijun+1)&&iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_CHINKOUSPAN,pkijun+0)<=iClose(NULL,pich2,pkijun+0))&&((iClose(NULL,pich2,0)>iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_SENKOUSPANA,0)&&iClose(NULL,pich2,0)<iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_SENKOUSPANB,0))||(iClose(NULL,pich2,0)<iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_SENKOUSPANA,0)&&iClose(NULL,pich2,0)>iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_SENKOUSPANB,0))))
@@ -151,22 +151,22 @@ class Stg_Ichimoku : public Strategy {
     if (_is_valid) {
       switch (_method) {
         case 1:
-          _result = _indi[CURR][LINE_TENKANSEN] + _trail * _direction;
+          _result = _indi[CURR][(int)LINE_TENKANSEN] + _trail * _direction;
           break;
         case 2:
-          _result = _indi[CURR][LINE_KIJUNSEN] + _trail * _direction;
+          _result = _indi[CURR][(int)LINE_KIJUNSEN] + _trail * _direction;
           break;
         case 3:
-          _result = _indi[CURR][LINE_SENKOUSPANA] + _trail * _direction;
+          _result = _indi[CURR][(int)LINE_SENKOUSPANA] + _trail * _direction;
           break;
         case 4:
-          _result = _indi[CURR][LINE_SENKOUSPANB] + _trail * _direction;
+          _result = _indi[CURR][(int)LINE_SENKOUSPANB] + _trail * _direction;
           break;
         case 5:
-          _result = _indi[CURR][LINE_CHIKOUSPAN] + _trail * _direction;
+          _result = _indi[CURR][(int)LINE_CHIKOUSPAN] + _trail * _direction;
           break;
         case 6:
-          _result = _indi[CURR][LINE_CHIKOUSPAN] + _trail * _direction;
+          _result = _indi[CURR][(int)LINE_CHIKOUSPAN] + _trail * _direction;
           break;
         case 7:
           _result = _indi[CURR].GetMin<double>() + _trail * _direction;
