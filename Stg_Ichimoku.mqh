@@ -169,10 +169,10 @@ class Stg_Ichimoku : public Strategy {
           _result = _indi[CURR][LINE_CHIKOUSPAN] + _trail * _direction;
           break;
         case 7:
-          _result = _indi[CURR].value.GetMinDbl(_indi.GetIDataType()) + _trail * _direction;
+          _result = _indi[CURR].GetMin<double>() + _trail * _direction;
           break;
         case 8:
-          _result = _indi[PREV].value.GetMinDbl(_indi.GetIDataType()) + _trail * _direction;
+          _result = _indi[PREV].GetMin<double>() + _trail * _direction;
           break;
         case 9: {
           int _bar_count1 = (int)_level * (int)_indi.GetTenkanSen();
