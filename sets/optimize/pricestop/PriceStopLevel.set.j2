@@ -1,6 +1,6 @@
 Ichimoku_Indi_Ichimoku_Applied_Price={{ applied_price | replace("(ENUM_APPLIED_PRICE)", "") | int | default(0) }}
 Ichimoku_Indi_Ichimoku_MA_Method={{ ma_method | default(0) }}
-Ichimoku_Indi_Ichimoku_Period={{ period | default(4) }}
+Ichimoku_Indi_Ichimoku_Period={{ (period | default(0) | int) }}
 Ichimoku_Indi_Ichimoku_Shift={{ shift | default(0) }}
 Ichimoku_LotSize={{ lot_size | default(0) }}
 Ichimoku_PriceStopLevel,1=10
