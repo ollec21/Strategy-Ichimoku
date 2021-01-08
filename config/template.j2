@@ -25,7 +25,7 @@ struct Stg_Ichimoku_Params_{{ Timeframe }} : StgParams {
     signal_close_method = {{ Ichimoku_SignalCloseMethod | default(0) }};
     signal_close_level = (float){{ Ichimoku_SignalCloseLevel | default(0) }};
     price_stop_method = {{ Ichimoku_PriceStopMethod | default(0) }};
-    price_stop_level = {{ Ichimoku_SignalCloseLevel | default(1) }};
+    price_stop_level = (float){{ Ichimoku_SignalCloseLevel | default(1) }};
     tick_filter_method = {{ Ichimoku_TickFilterMethod  | default(1) }};
     max_spread = {{ Ichimoku_MaxSpread | default(0) }};
   }
