@@ -6,10 +6,10 @@
 // Defines indicator's parameter values for the given pair symbol and timeframe.
 struct Indi_Ichimoku_Params_{{ Timeframe }} : Indi_Ichimoku_Params {
   Indi_Ichimoku_Params_{{ Timeframe }}() : Indi_Ichimoku_Params(indi_ichi_defaults, PERIOD_{{ Timeframe }}) {
-    applied_price = (ENUM_APPLIED_PRICE){{ Ichimoku_Indi_Ichimoku_Applied_Price | default(0) }};
-    ma_method = {{ Ichimoku_Indi_Ichimoku_MA_Method | default(0) }};
-    period = {{ Ichimoku_Indi_Ichimoku_Period | default(0) }};
+    kijun_sen = {{ Ichimoku_Indi_Ichimoku_Period_Kijun_Sen | default(0) }}
+    senkou_span_b = {{ Ichimoku_Indi_Ichimoku_Period_Senkou_Span_B | default(0) }}
     shift = {{ Ichimoku_Shift | default(0) }};
+    tenkan_sen = {{ Ichimoku_Indi_Ichimoku_Period_Tenkan_Sen | default(0) }}
   }
 } indi_ichi_{{ Timeframe | lower }};
 

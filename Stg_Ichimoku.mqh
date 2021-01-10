@@ -18,18 +18,19 @@ INPUT float Ichimoku_MaxSpread = 4.0;                   // Max spread to trade (
 INPUT int Ichimoku_Shift = 0;                           // Shift
 INPUT int Ichimoku_OrderCloseTime = -20;                // Order close time in mins (>0) or bars (<0)
 INPUT string __Ichimoku_Indi_Ichimoku_Parameters__ =
-    "-- Ichimoku strategy: Ichimoku indicator params --";  // >>> Ichimoku strategy: Ichimoku indicator <<<
-INPUT int Indi_Ichimoku_Period_Tenkan_Sen = 9;             // Period Tenkan Sen
-INPUT int Indi_Ichimoku_Period_Kijun_Sen = 26;             // Period Kijun Sen
-INPUT int Indi_Ichimoku_Period_Senkou_Span_B = 52;         // Period Senkou Span B
+    "-- Ichimoku strategy: Ichimoku indicator params --";    // >>> Ichimoku strategy: Ichimoku indicator <<<
+INPUT int Ichimoku_Indi_Ichimoku_Period_Tenkan_Sen = 9;      // Period Tenkan Sen
+INPUT int Ichimoku_Indi_Ichimoku_Period_Kijun_Sen = 26;      // Period Kijun Sen
+INPUT int Ichimoku_Indi_Ichimoku_Period_Senkou_Span_B = 52;  // Period Senkou Span B
+INPUT int Ichimoku_Indi_Ichimoku_Shift = 0;                  // Shift
 
 // Structs.
 
 // Defines struct with default user indicator values.
 struct Indi_Ichimoku_Params_Defaults : IchimokuParams {
   Indi_Ichimoku_Params_Defaults()
-      : IchimokuParams(::Indi_Ichimoku_Period_Tenkan_Sen, ::Indi_Ichimoku_Period_Kijun_Sen,
-                       ::Indi_Ichimoku_Period_Senkou_Span_B) {}
+      : IchimokuParams(::Ichimoku_Indi_Ichimoku_Period_Tenkan_Sen, ::Ichimoku_Indi_Ichimoku_Period_Kijun_Sen,
+                       ::Ichimoku_Indi_Ichimoku_Period_Senkou_Span_B, ::Ichimoku_Indi_Ichimoku_Shift) {}
 } indi_ichi_defaults;
 
 // Defines struct to store indicator parameter values.
