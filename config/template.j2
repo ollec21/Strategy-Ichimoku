@@ -4,8 +4,8 @@
  */
 
 // Defines indicator's parameter values for the given pair symbol and timeframe.
-struct Indi_Ichimoku_Params_{{ Timeframe }} : Indi_Ichimoku_Params {
-  Indi_Ichimoku_Params_{{ Timeframe }}() : Indi_Ichimoku_Params(indi_ichi_defaults, PERIOD_{{ Timeframe }}) {
+struct Indi_Ichimoku_Params_{{ Timeframe }} : IchimokuParams {
+  Indi_Ichimoku_Params_{{ Timeframe }}() : IchimokuParams(indi_ichi_defaults, PERIOD_{{ Timeframe }}) {
     kijun_sen = {{ Ichimoku_Indi_Ichimoku_Period_Kijun_Sen | default(0) }}
     senkou_span_b = {{ Ichimoku_Indi_Ichimoku_Period_Senkou_Span_B | default(0) }}
     shift = {{ Ichimoku_Shift | default(0) }};

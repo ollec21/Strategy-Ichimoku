@@ -33,12 +33,6 @@ struct Indi_Ichimoku_Params_Defaults : IchimokuParams {
                        ::Ichimoku_Indi_Ichimoku_Period_Senkou_Span_B, ::Ichimoku_Indi_Ichimoku_Shift) {}
 } indi_ichi_defaults;
 
-// Defines struct to store indicator parameter values.
-struct Indi_Ichimoku_Params : public IchimokuParams {
-  // Struct constructors.
-  void Indi_Ichimoku_Params(IchimokuParams &_params, ENUM_TIMEFRAMES _tf) : IchimokuParams(_params, _tf) {}
-};
-
 // Defines struct with default user strategy values.
 struct Stg_Ichimoku_Params_Defaults : StgParams {
   Stg_Ichimoku_Params_Defaults()
@@ -50,11 +44,11 @@ struct Stg_Ichimoku_Params_Defaults : StgParams {
 
 // Struct to define strategy parameters to override.
 struct Stg_Ichimoku_Params : StgParams {
-  Indi_Ichimoku_Params iparams;
+  IchimokuParams iparams;
   StgParams sparams;
 
   // Struct constructors.
-  Stg_Ichimoku_Params(Indi_Ichimoku_Params &_iparams, StgParams &_sparams)
+  Stg_Ichimoku_Params(IchimokuParams &_iparams, StgParams &_sparams)
       : iparams(indi_ichi_defaults, _iparams.tf), sparams(stg_ichi_defaults) {
     iparams = _iparams;
     sparams = _sparams;
@@ -76,11 +70,11 @@ class Stg_Ichimoku : public Strategy {
 
   static Stg_Ichimoku *Init(ENUM_TIMEFRAMES _tf = NULL, long _magic_no = NULL, ENUM_LOG_LEVEL _log_level = V_INFO) {
     // Initialize strategy initial values.
-    Indi_Ichimoku_Params _indi_params(indi_ichi_defaults, _tf);
+    IchimokuParams _indi_params(indi_ichi_defaults, _tf);
     StgParams _stg_params(stg_ichi_defaults);
     if (!Terminal::IsOptimization()) {
-      SetParamsByTf<Indi_Ichimoku_Params>(_indi_params, _tf, indi_ichi_m1, indi_ichi_m5, indi_ichi_m15, indi_ichi_m30,
-                                          indi_ichi_h1, indi_ichi_h4, indi_ichi_h8);
+      SetParamsByTf<IchimokuParams>(_indi_params, _tf, indi_ichi_m1, indi_ichi_m5, indi_ichi_m15, indi_ichi_m30,
+                                    indi_ichi_h1, indi_ichi_h4, indi_ichi_h8);
       SetParamsByTf<StgParams>(_stg_params, _tf, stg_ichi_m1, stg_ichi_m5, stg_ichi_m15, stg_ichi_m30, stg_ichi_h1,
                                stg_ichi_h4, stg_ichi_h8);
     }
