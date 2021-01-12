@@ -5,7 +5,12 @@
 
 // Defines indicator's parameter values for the given pair symbol and timeframe.
 struct Indi_Ichimoku_Params_M1 : IchimokuParams {
-  Indi_Ichimoku_Params_M1() : IchimokuParams(indi_ichi_defaults, PERIOD_M1) { shift = 0; }
+  Indi_Ichimoku_Params_M1() : IchimokuParams(indi_ichi_defaults, PERIOD_M1) {
+    tenkan_sen = 9;
+    kijun_sen = 26;
+    senkou_span_b = 52;
+    shift = 0;
+  }
 } indi_ichi_m1;
 
 // Defines strategy's parameter values for the given pair symbol and timeframe.
