@@ -104,13 +104,20 @@ class Stg_Ichimoku : public Strategy {
     Indi_Ichimoku *_indi = Data();
     bool _is_valid = _indi[CURR].IsValid() && _indi[PREV].IsValid() && _indi[PPREV].IsValid();
     bool _result = _is_valid;
-    double _level_pips = _level * Chart().GetPipSize();
     if (_is_valid) {
       switch (_cmd) {
         case ORDER_TYPE_BUY:
-          // Buy 1: Tenkan-sen crosses Kijun-sen upwards.
-          _result = _indi[CURR][(int)LINE_TENKANSEN] >= _indi[CURR][(int)LINE_CHIKOUSPAN] &&
-                    _indi[PREV][(int)LINE_TENKANSEN] < _indi[PREV][(int)LINE_CHIKOUSPAN];
+          _result &= _indi.IsIncreasing(2, LINE_TENKANSEN, _shift);
+          if (_method != 0) {
+            if (METHOD(_method, 0)) _result &= _indi[CURR][(int)LINE_TENKANSEN] >= _indi[CURR][(int)LINE_CHIKOUSPAN];
+            // Buy 1: Tenkan-sen crosses Kijun-sen upwards.
+            if (METHOD(_method, 1)) _result &= _indi[PREV][(int)LINE_TENKANSEN] < _indi[PREV][(int)LINE_CHIKOUSPAN];
+            if (METHOD(_method, 2)) _result &= _indi.IsIncreasing(2, LINE_CHIKOUSPAN, _shift);
+            if (METHOD(_method, 3)) _result &= _indi.IsIncreasing(2, LINE_TENKANSEN, _shift);
+            if (METHOD(_method, 4)) _result &= _indi.IsIncreasing(2, LINE_KIJUNSEN, _shift);
+            if (METHOD(_method, 5)) _result &= _indi.IsIncreasing(2, LINE_SENKOUSPANA, _shift);
+            if (METHOD(_method, 6)) _result &= _indi.IsIncreasing(2, LINE_SENKOUSPANB, _shift);
+          }
           // Buy 2: Chinkou Span crosses chart upwards; price is ib the cloud.
           // @todo: if
           // ((iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_CHINKOUSPAN,pkijun+1)<iClose(NULL,pich2,pkijun+1)&&iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_CHINKOUSPAN,pkijun+0)>=iClose(NULL,pich2,pkijun+0))&&((iClose(NULL,pich2,0)>iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_SENKOUSPANA,0)&&iClose(NULL,pich2,0)<iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_SENKOUSPANB,0))||(iClose(NULL,pich2,0)<iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_SENKOUSPANA,0)&&iClose(NULL,pich2,0)>iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_SENKOUSPANB,0))))
@@ -119,9 +126,17 @@ class Stg_Ichimoku : public Strategy {
           // (iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_SENKOUSPANB,1)>iClose(NULL,pich2,1)&&iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_SENKOUSPANB,0)<=iClose(NULL,pich2,0)&&iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_SENKOUSPANA,0)<iClose(NULL,pich2,0))
           break;
         case ORDER_TYPE_SELL:
-          // Sell 1: Tenkan-sen crosses Kijun-sen downwards.
-          _result = _indi[CURR][(int)LINE_TENKANSEN] <= _indi[CURR][(int)LINE_CHIKOUSPAN] &&
-                    _indi[PREV][(int)LINE_TENKANSEN] > _indi[PREV][(int)LINE_CHIKOUSPAN];
+          _result &= _indi.IsDecreasing(2, LINE_TENKANSEN, _shift);
+          if (_method != 0) {
+            if (METHOD(_method, 0)) _result &= _indi[CURR][(int)LINE_TENKANSEN] <= _indi[CURR][(int)LINE_CHIKOUSPAN];
+            // Sell 1: Tenkan-sen crosses Kijun-sen downwards.
+            if (METHOD(_method, 1)) _result &= _indi[PREV][(int)LINE_TENKANSEN] > _indi[PREV][(int)LINE_CHIKOUSPAN];
+            if (METHOD(_method, 2)) _result &= _indi.IsDecreasing(2, LINE_CHIKOUSPAN, _shift);
+            if (METHOD(_method, 3)) _result &= _indi.IsDecreasing(2, LINE_TENKANSEN, _shift);
+            if (METHOD(_method, 4)) _result &= _indi.IsDecreasing(2, LINE_KIJUNSEN, _shift);
+            if (METHOD(_method, 5)) _result &= _indi.IsDecreasing(2, LINE_SENKOUSPANA, _shift);
+            if (METHOD(_method, 6)) _result &= _indi.IsDecreasing(2, LINE_SENKOUSPANB, _shift);
+          }
           // Sell 2: Chinkou Span crosses chart downwards; price is ib the cloud.
           // @todo:
           // ((iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_CHINKOUSPAN,pkijun+1)>iClose(NULL,pich2,pkijun+1)&&iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_CHINKOUSPAN,pkijun+0)<=iClose(NULL,pich2,pkijun+0))&&((iClose(NULL,pich2,0)>iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_SENKOUSPANA,0)&&iClose(NULL,pich2,0)<iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_SENKOUSPANB,0))||(iClose(NULL,pich2,0)<iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_SENKOUSPANA,0)&&iClose(NULL,pich2,0)>iIchimoku(NULL,pich,ptenkan,pkijun,psenkou,MODE_SENKOUSPANB,0))))
