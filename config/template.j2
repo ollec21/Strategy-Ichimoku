@@ -8,7 +8,7 @@ struct Indi_Ichimoku_Params_{{ Timeframe }} : IchimokuParams {
   Indi_Ichimoku_Params_{{ Timeframe }}() : IchimokuParams(indi_ichi_defaults, PERIOD_{{ Timeframe }}) {
     kijun_sen = {{ Ichimoku_Indi_Ichimoku_Period_Kijun_Sen | default(0) }}
     senkou_span_b = {{ Ichimoku_Indi_Ichimoku_Period_Senkou_Span_B | default(0) }}
-    shift = {{ Ichimoku_Shift | default(0) }};
+    shift = {{ Ichimoku_Indi_Ichimoku_Shift | default(0) }};
     tenkan_sen = {{ Ichimoku_Indi_Ichimoku_Period_Tenkan_Sen | default(0) }}
   }
 } indi_ichi_{{ Timeframe | lower }};

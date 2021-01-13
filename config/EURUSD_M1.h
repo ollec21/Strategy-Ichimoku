@@ -6,8 +6,8 @@
 // Defines indicator's parameter values for the given pair symbol and timeframe.
 struct Indi_Ichimoku_Params_M1 : IchimokuParams {
   Indi_Ichimoku_Params_M1() : IchimokuParams(indi_ichi_defaults, PERIOD_M1) {
-    tenkan_sen = 9;
-    kijun_sen = 26;
+    tenkan_sen = 21;
+    kijun_sen = 20;
     senkou_span_b = 52;
     shift = 0;
   }
