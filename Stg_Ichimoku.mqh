@@ -88,7 +88,6 @@ class Stg_Ichimoku : public Strategy {
     _stg_params.SetTf(_tf, _Symbol);
     // Initialize strategy instance.
     Strategy *_strat = new Stg_Ichimoku(_stg_params, "Ichimoku");
-    _stg_params.SetStops(_strat, _strat);
     return _strat;
   }
 
