@@ -73,12 +73,12 @@ class Stg_Ichimoku : public Strategy {
     // Initialize strategy initial values.
     IchimokuParams _indi_params(indi_ichi_defaults, _tf);
     StgParams _stg_params(stg_ichi_defaults);
-    if (!Terminal::IsOptimization()) {
-      SetParamsByTf<IchimokuParams>(_indi_params, _tf, indi_ichi_m1, indi_ichi_m5, indi_ichi_m15, indi_ichi_m30,
-                                    indi_ichi_h1, indi_ichi_h4, indi_ichi_h8);
-      SetParamsByTf<StgParams>(_stg_params, _tf, stg_ichi_m1, stg_ichi_m5, stg_ichi_m15, stg_ichi_m30, stg_ichi_h1,
-                               stg_ichi_h4, stg_ichi_h8);
-    }
+#ifdef __config__
+    SetParamsByTf<IchimokuParams>(_indi_params, _tf, indi_ichi_m1, indi_ichi_m5, indi_ichi_m15, indi_ichi_m30,
+                                  indi_ichi_h1, indi_ichi_h4, indi_ichi_h8);
+    SetParamsByTf<StgParams>(_stg_params, _tf, stg_ichi_m1, stg_ichi_m5, stg_ichi_m15, stg_ichi_m30, stg_ichi_h1,
+                             stg_ichi_h4, stg_ichi_h8);
+#endif
     // Initialize indicator.
     IchimokuParams ichi_params(_indi_params);
     _stg_params.SetIndicator(new Indi_Ichimoku(_indi_params));
