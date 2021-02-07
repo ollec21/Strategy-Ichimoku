@@ -4,19 +4,20 @@
  */
 
 // User input params.
-INPUT float Ichimoku_LotSize = 0;                       // Lot size
-INPUT int Ichimoku_SignalOpenMethod = 0;                // Signal open method (0-
-INPUT float Ichimoku_SignalOpenLevel = 0.0f;            // Signal open level
-INPUT int Ichimoku_SignalOpenFilterMethod = 1;          // Signal open filter method
-INPUT int Ichimoku_SignalOpenBoostMethod = 0.00000000;  // Signal open boost method
-INPUT int Ichimoku_SignalCloseMethod = 0;               // Signal close method (0-
-INPUT float Ichimoku_SignalCloseLevel = 0.0f;           // Signal close level
-INPUT int Ichimoku_PriceStopMethod = 0;                 // Price stop method
-INPUT float Ichimoku_PriceStopLevel = 0;                // Price stop level
-INPUT int Ichimoku_TickFilterMethod = 1;                // Tick filter method
-INPUT float Ichimoku_MaxSpread = 4.0;                   // Max spread to trade (pips)
-INPUT int Ichimoku_Shift = 0;                           // Shift
-INPUT int Ichimoku_OrderCloseTime = -20;                // Order close time in mins (>0) or bars (<0)
+INPUT string __Ichimoku_Parameters__ = "-- Ichimoku strategy params --";  // >>> ICHIMOKU <<<
+INPUT float Ichimoku_LotSize = 0;                                         // Lot size
+INPUT int Ichimoku_SignalOpenMethod = 0;                                  // Signal open method (0-
+INPUT float Ichimoku_SignalOpenLevel = 0.0f;                              // Signal open level
+INPUT int Ichimoku_SignalOpenFilterMethod = 1;                            // Signal open filter method
+INPUT int Ichimoku_SignalOpenBoostMethod = 0;                             // Signal open boost method
+INPUT int Ichimoku_SignalCloseMethod = 0;                                 // Signal close method (0-
+INPUT float Ichimoku_SignalCloseLevel = 0.0f;                             // Signal close level
+INPUT int Ichimoku_PriceStopMethod = 0;                                   // Price stop method
+INPUT float Ichimoku_PriceStopLevel = 0;                                  // Price stop level
+INPUT int Ichimoku_TickFilterMethod = 1;                                  // Tick filter method
+INPUT float Ichimoku_MaxSpread = 4.0;                                     // Max spread to trade (pips)
+INPUT int Ichimoku_Shift = 0;                                             // Shift
+INPUT int Ichimoku_OrderCloseTime = -20;                                  // Order close time in mins (>0) or bars (<0)
 INPUT string __Ichimoku_Indi_Ichimoku_Parameters__ =
     "-- Ichimoku strategy: Ichimoku indicator params --";    // >>> Ichimoku strategy: Ichimoku indicator <<<
 INPUT int Ichimoku_Indi_Ichimoku_Period_Tenkan_Sen = 9;      // Period Tenkan Sen
@@ -72,12 +73,12 @@ class Stg_Ichimoku : public Strategy {
     // Initialize strategy initial values.
     IchimokuParams _indi_params(indi_ichi_defaults, _tf);
     StgParams _stg_params(stg_ichi_defaults);
-    if (!Terminal::IsOptimization()) {
-      SetParamsByTf<IchimokuParams>(_indi_params, _tf, indi_ichi_m1, indi_ichi_m5, indi_ichi_m15, indi_ichi_m30,
-                                    indi_ichi_h1, indi_ichi_h4, indi_ichi_h8);
-      SetParamsByTf<StgParams>(_stg_params, _tf, stg_ichi_m1, stg_ichi_m5, stg_ichi_m15, stg_ichi_m30, stg_ichi_h1,
-                               stg_ichi_h4, stg_ichi_h8);
-    }
+#ifdef __config__
+    SetParamsByTf<IchimokuParams>(_indi_params, _tf, indi_ichi_m1, indi_ichi_m5, indi_ichi_m15, indi_ichi_m30,
+                                  indi_ichi_h1, indi_ichi_h4, indi_ichi_h8);
+    SetParamsByTf<StgParams>(_stg_params, _tf, stg_ichi_m1, stg_ichi_m5, stg_ichi_m15, stg_ichi_m30, stg_ichi_h1,
+                             stg_ichi_h4, stg_ichi_h8);
+#endif
     // Initialize indicator.
     IchimokuParams ichi_params(_indi_params);
     _stg_params.SetIndicator(new Indi_Ichimoku(_indi_params));
@@ -87,7 +88,6 @@ class Stg_Ichimoku : public Strategy {
     _stg_params.SetTf(_tf, _Symbol);
     // Initialize strategy instance.
     Strategy *_strat = new Stg_Ichimoku(_stg_params, "Ichimoku");
-    _stg_params.SetStops(_strat, _strat);
     return _strat;
   }
 
